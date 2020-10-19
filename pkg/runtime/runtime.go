@@ -1174,6 +1174,9 @@ func (a *DaprRuntime) publishMessageGRPC(msg *pubsub.NewMessage) error {
 			// DROP
 			log.Warn("non-retriable error returned from app while processing pub/sub event %v: %s", cloudEvent.ID, err)
 			return nil
+		} else if hasErrStatus && (errStatus.Code() == codes.Unavailable) {
+			log.Warnf("gRPC handler unavailable to process pub/sub event %v: %s", cloudEvent.ID, err)
+			return err
 		}
 
 		err = errors.Errorf("error returned from app while processing pub/sub event %v: %s", cloudEvent.ID, err)
