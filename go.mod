@@ -1,5 +1,4 @@
-module github.com/dapr/dapr
-
+module github.com/infobloxopen/dapr
 go 1.16
 
 require (
