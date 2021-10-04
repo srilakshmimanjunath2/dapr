@@ -93,11 +93,72 @@ HELM_OUT_DIR:=$(OUT_DIR)/install
 HELM_MANIFEST_FILE:=$(HELM_OUT_DIR)/$(RELEASE_NAME).yaml
 HELM_REGISTRY?=daprio.azurecr.io
 
+# Docker image build and push setting
+DOCKER:=docker
+DOCKERFILE_DIR := $(CURDIR)/docker
+DAPR_SYSTEM_IMAGE_NAME=$(RELEASE_NAME)
+DAPR_RUNTIME_IMAGE_NAME=daprd
+DAPR_PLACEMENT_IMAGE_NAME=placement
+DAPR_SENTRY_IMAGE_NAME=sentry
+
+# build docker image for linux
+BIN_PATH=$(OUT_DIR)/$(TARGET_OS)_$(TARGET_ARCH)
+
+ifeq ($(TARGET_OS), windows)
+  DOCKERFILE:=Dockerfile-windows
+  BIN_PATH := $(BIN_PATH)/release
+else ifeq ($(origin DEBUG), undefined)
+  DOCKERFILE:=Dockerfile
+  BIN_PATH := $(BIN_PATH)/release
+else ifeq ($(DEBUG),0)
+  DOCKERFILE:=Dockerfile
+  BIN_PATH := $(BIN_PATH)/release
+else
+  DOCKERFILE:=Dockerfile-debug
+  BIN_PATH := $(BIN_PATH)/debug
+endif
+
+ifeq ($(TARGET_ARCH),arm)
+  DOCKER_IMAGE_PLATFORM:=$(TARGET_OS)/arm/v7
+else ifeq ($(TARGET_ARCH),arm64)
+  DOCKER_IMAGE_PLATFORM:=$(TARGET_OS)/arm64/v8
+else
+  DOCKER_IMAGE_PLATFORM:=$(TARGET_OS)/amd64
+endif
+
+# Supported docker image architecture
+DOCKERMUTI_ARCH=linux-amd64 linux-arm linux-arm64 windows-amd64
+
+################################################################################
+# Target: docker-build, docker-push                                            #
+################################################################################
+# configuration for image names
+USERNAME                := $(USERNAME)
+GIT_COMMIT              := $(shell git describe --tags --dirty=-unsupported --always || echo pre-commit)
+IMAGE_VERSION ?= $(GIT_COMMIT)-j$(BUILD_NUMBER)
+LATEST_TAG    ?= latest
+#BUILD_PATH             := bin
+#BUILD_NUMBER       ?= 0
+
+
+
+LINUX_BINS_OUT_DIR=$(OUT_DIR)/linux_$(GOARCH)
+DOCKER_IMAGE_TAG=$(REPO)/$(DAPR_SYSTEM_IMAGE_NAME):$(IMAGE_VERSION)
+DAPR_RUNTIME_DOCKER_IMAGE_TAG=$(REPO)/$(DAPR_RUNTIME_IMAGE_NAME):$(IMAGE_VERSION)
+DAPR_PLACEMENT_DOCKER_IMAGE_TAG=$(REPO)/$(DAPR_PLACEMENT_IMAGE_NAME):$(IMAGE_VERSION)
+DAPR_SENTRY_DOCKER_IMAGE_TAG=$(REPO)/$(DAPR_SENTRY_IMAGE_NAME):$(IMAGE_VERSION)
+
+ifeq ($(LATEST_RELEASE),true)
+DOCKER_IMAGE_LATEST_TAG=$(REPO)/$(DAPR_SYSTEM_IMAGE_NAME):$(LATEST_TAG)
+DAPR_RUNTIME_DOCKER_IMAGE_LATEST_TAG=$(REPO)/$(DAPR_RUNTIME_IMAGE_NAME):$(LATEST_TAG)
+DAPR_PLACEMENT_DOCKER_IMAGE_LATEST_TAG=$(REPO)/$(DAPR_PLACEMENT_IMAGE_NAME):$(LATEST_TAG)
+DAPR_SENTRY_DOCKER_IMAGE_LATEST_TAG=$(REPO)/$(DAPR_SENTRY_IMAGE_NAME):$(LATEST_TAG)
+endif
 
 ################################################################################
 # Go build details                                                             #
 ################################################################################
-BASE_PACKAGE_NAME := github.com/dapr/dapr
+BASE_PACKAGE_NAME := github.com/infobloxopen/dapr
 
 DEFAULT_LDFLAGS:=-X $(BASE_PACKAGE_NAME)/pkg/version.commit=$(GIT_VERSION) -X $(BASE_PACKAGE_NAME)/pkg/version.version=$(DAPR_VERSION)
 
@@ -235,6 +296,28 @@ test:
 lint:
 	$(GOLANGCI_LINT) run --timeout=20m
 
+###############################################################################
+# Docker                                                                      #
+###############################################################################
+.PHONY: docker
+docker:
+	ifeq ($(TARGET_ARCH),amd64)
+	        @docker build --build-arg PKG_FILES=* -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	        @docker build --build-arg PKG_FILES=daprd -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_RUNTIME_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	        @docker build --build-arg PKG_FILES=placement -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_PLACEMENT_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	        @docker build --build-arg PKG_FILES=sentry -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_SENTRY_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	else
+	        -@docker buildx create --use --name daprbuild
+	        -@docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+	         @docker buildx build --build-arg PKG_FILES=* --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	         @docker buildx build --build-arg PKG_FILES=daprd --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_RUNTIME_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	         @docker buildx build --build-arg PKG_FILES=placement --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_PLACEMENT_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	         @docker buildx build --build-arg PKG_FILES=sentry --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_SENTRY_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	endif
+
+
+
+
 ################################################################################
 # Target: modtidy                                                              #
 ################################################################################
@@ -293,7 +376,7 @@ include tools/codegen.mk
 ################################################################################
 # Target: docker                                                               #
 ################################################################################
-include docker/docker.mk
+#include docker/docker.mk
 
 ################################################################################
 # Target: tests                                                                #
