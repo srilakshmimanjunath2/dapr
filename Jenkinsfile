@@ -21,20 +21,11 @@ pipeline {
         prepareBuild()
       }
     }
-    stage("Lint") {
-      steps {
-        sh "cd $DIRECTORY && make fmt && git diff --exit-code > /dev/null"
-      }
-    }
-    stage("Test") {
-      steps {
-        sh "cd $DIRECTORY && make test"
-      }
-    }
+   
     stage("Build") {
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-          sh "cd $DIRECTORY && make docker"
+          sh "cd $DIRECTORY && make docker-build"
         }
       }
     }
@@ -45,8 +36,14 @@ pipeline {
        }
        steps {
           withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-             sh 'cd $DIRECTORY && make push-latest USERNAME="Jenkins"'
-             sh 'cd $DIRECTORY && make push'
+             sh 'cd $DIRECTORY && make docker-push USERNAME="Jenkins"'
+             sh 'cd $DIRECTORY && make docker-push'
+             sh 'cd $DIRECTORY && make docker-manifest-create'
+             sh 'cd $DIRECTORY && make docker-publish'
+             sh 'cd $DIRECTORY && make check-windows-version'
+             sh 'cd $DIRECTORY && make docker-windows-base-build'
+             sh 'cd $DIRECTORY && make docker-windows-base-push'
+             
           }
           // AWS_IAM_CI_CD_INFRA
           withAWS(credentials: "CICD_HELM", region: "us-east-1") {
