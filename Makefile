@@ -303,7 +303,7 @@ lint:
 .PHONY: docker-build
 docker-build:
 	#ifeq ($(TARGET_ARCH),amd64)
-	        $(info check1 $(DOCKERFILE_DIR) /$(DOCKERFILE) $(BIN_PATH)  -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH) )
+	        $(@docker build --build-arg PKG_FILES=* -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH))
 	       
 	        @docker build --build-arg PKG_FILES=* -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
 	        @docker build --build-arg PKG_FILES=daprd -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_RUNTIME_DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
