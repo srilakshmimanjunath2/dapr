@@ -95,7 +95,8 @@ HELM_REGISTRY?=daprio.azurecr.io
 
 # Docker image build and push setting
 DOCKER:=docker
-DOCKERFILE_DIR := $(CURDIR)/docker
+#DOCKERFILE_DIR := $(CURDIR)/docker
+DOCKERFILE_DIR := ./docker
 DAPR_SYSTEM_IMAGE_NAME=$(RELEASE_NAME)
 DAPR_RUNTIME_IMAGE_NAME=daprd
 DAPR_PLACEMENT_IMAGE_NAME=placement
