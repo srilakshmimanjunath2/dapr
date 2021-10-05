@@ -32,7 +32,8 @@ LATEST_RELEASE ?=
 PROTOC ?=protoc
 
 ifdef REL_VERSION
-	DAPR_VERSION := $(REL_VERSION)
+	#DAPR_VERSION := $(REL_VERSION)
+DAPR_VERSION := edge
 else
 	DAPR_VERSION := edge
 endif
