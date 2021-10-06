@@ -29,17 +29,12 @@ pipeline {
     }
    stage("build-and-archive-binaries-and-publish") {
       steps {
-        sh "cd $DIRECTORY && make release GOOS='darwin' GOARCH='amd64' ARCHIVE_OUT_DIR=$(Build.ArtifactStagingDirectory)"
+        sh "cd $DIRECTORY && make release GOOS='darwin' GOARCH='amd64' "
       }
-	  post {
-        always {
-            archiveArtifacts artifacts: '$(Build.ArtifactStagingDirectory)/*', 
-			onlyIfSuccessful: true
-        }
 	  
 	  
     }
-    }
+    
     
     stage("Build") {
       steps {
