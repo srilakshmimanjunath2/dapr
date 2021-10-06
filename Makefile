@@ -296,8 +296,6 @@ test:
 # Due to https://github.com/golangci/golangci-lint/issues/580, we need to add --fix for windows
 .PHONY: lint
 lint:   
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1
-	sudo cp ./bin/golangci-lint $(go env GOPATH)/bin/
 	$(GOLANGCI_LINT) run --timeout=20m
 
 ###############################################################################

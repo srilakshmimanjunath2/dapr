@@ -22,6 +22,13 @@ pipeline {
         prepareBuild()
       }
     }
+   stage('Bootstrap') {
+			steps {
+				echo 'Bootstrapping..'
+				sh 'go version'
+				sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1'
+			}
+		}
     stage("Lint") {
       steps {
         sh "cd $DIRECTORY && make lint"
