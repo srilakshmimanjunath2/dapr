@@ -22,11 +22,6 @@ pipeline {
         prepareBuild()
       }
     }
-    stage("Test") {
-      steps {
-        sh "cd $DIRECTORY && make test"
-      }
-    }
     stage("Build") {
       steps {
         sh "cd $DIRECTORY && make build"
