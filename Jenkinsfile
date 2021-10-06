@@ -33,7 +33,7 @@ pipeline {
 		}
     stage("Lint") {
       steps {
-        sh 'PATH=$PATH:$(shell go env GOPATH)/bin golangci-lint run --timeout=20m'
+        sh "cd $DIRECTORY && make lint"
       }
     }
     stage("Build") {
