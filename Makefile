@@ -81,8 +81,7 @@ endif
 
 export BINARY_EXT ?= $(BINARY_EXT_LOCAL)
 
-#OUT_DIR := ./dist
-OUT_DIR := /go/src/github.com/infobloxopen/dapr
+OUT_DIR := ./dist
 
 
 # Helm template and install setting

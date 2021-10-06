@@ -14,6 +14,7 @@ pipeline {
     GOPATH = "$WORKSPACE"
     DIRECTORY = "src/github.com/infobloxopen/dapr"
     DOCKER_IMAGE = "infoblox/dapr"
+    
   }
   stages {
     stage("Setup") {
@@ -21,8 +22,13 @@ pipeline {
         prepareBuild()
       }
     }
-   
     stage("Build") {
+      steps {
+        sh "cd $DIRECTORY && make build"
+      }
+    }
+   
+    stage("Build-Docker") {
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
           sh "cd $DIRECTORY && make docker-build"
