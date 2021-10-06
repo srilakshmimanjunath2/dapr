@@ -22,24 +22,15 @@ pipeline {
         prepareBuild()
       }
     }
-   stage("Test") {
-      steps {
-        sh "cd $DIRECTORY && make test"
-      }
-    }
-   stage("build-and-archive-binaries-and-publish") {
-      steps {
-        sh "cd $DIRECTORY && make release GOOS='darwin' GOARCH='amd64' ARCHIVE_OUT_DIR=$(Build.ArtifactStagingDirectory)"
-      }
-	  post {
-        always {
-            archiveArtifacts artifacts: '$(Build.ArtifactStagingDirectory)/*', 
-			onlyIfSuccessful: true
-        }
-	  
-	  
-    }
-    }
+   stage('Bootstrap') {
+			steps {
+				echo 'Bootstrapping..'
+                                sh 'export'
+				sh 'go version'
+				sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin  2>&1'
+                                
+			}
+		}
     
     stage("Build") {
       steps {
