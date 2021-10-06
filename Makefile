@@ -77,7 +77,6 @@ else
 BINARY_EXT_LOCAL:=
 GOLANGCI_LINT:=golangci-lint
 export ARCHIVE_EXT = .tar.gz
-curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1
 endif
 
 export BINARY_EXT ?= $(BINARY_EXT_LOCAL)
@@ -296,7 +295,8 @@ test:
 ################################################################################
 # Due to https://github.com/golangci/golangci-lint/issues/580, we need to add --fix for windows
 .PHONY: lint
-lint:
+lint:   
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1
 	$(GOLANGCI_LINT) run --timeout=20m
 
 ###############################################################################
