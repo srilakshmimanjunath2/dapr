@@ -110,10 +110,10 @@ ifeq ($(TARGET_OS), windows)
   DOCKERFILE:=Dockerfile-windows
   BIN_PATH := $(BIN_PATH)/release
 else ifeq ($(origin DEBUG), undefined)
-  DOCKERFILE:=Dockerfile-dev
+  DOCKERFILE:=Dockerfile
   BIN_PATH := $(BIN_PATH)/release
 else ifeq ($(DEBUG),0)
-  DOCKERFILE:=Dockerfile-dev
+  DOCKERFILE:=Dockerfile
   BIN_PATH := $(BIN_PATH)/release
 else
   DOCKERFILE:=Dockerfile-debug
@@ -297,6 +297,7 @@ test:
 .PHONY: lint
 lint:   
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1
+	sudo cp ./bin/golangci-lint $(go env GOPATH)/bin/
 	$(GOLANGCI_LINT) run --timeout=20m
 
 ###############################################################################
