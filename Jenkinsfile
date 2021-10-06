@@ -27,7 +27,7 @@ pipeline {
 				echo 'Bootstrapping..'
                                 sh 'export'
 				sh 'go version'
-				sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin  v1.31 2>&1'
+				sh 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin  2>&1'
                                 sh 'go mod vendor'
 			}
 		}
