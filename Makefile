@@ -110,10 +110,10 @@ ifeq ($(TARGET_OS), windows)
   DOCKERFILE:=Dockerfile-windows
   BIN_PATH := $(BIN_PATH)/release
 else ifeq ($(origin DEBUG), undefined)
-  DOCKERFILE:=Dockerfile
+  DOCKERFILE:=Dockerfile-dev
   BIN_PATH := $(BIN_PATH)/release
 else ifeq ($(DEBUG),0)
-  DOCKERFILE:=Dockerfile
+  DOCKERFILE:=Dockerfile-dev
   BIN_PATH := $(BIN_PATH)/release
 else
   DOCKERFILE:=Dockerfile-debug
