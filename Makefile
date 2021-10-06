@@ -295,12 +295,9 @@ test:
 ################################################################################
 # Due to https://github.com/golangci/golangci-lint/issues/580, we need to add --fix for windows
 .PHONY: lint
-lint:   
-ifeq ($(TARGET_ARCH),amd64)
-  ifneq ($(TARGET_OS), linux)
-     $(GOLANGCI_LINT) run --timeout=20m
-  endif
-endif
+
+ $(GOLANGCI_LINT) run --timeout=20m
+  
 
 ###############################################################################
 # Docker                                                                      #
@@ -322,8 +319,9 @@ endif
 # Target: modtidy                                                              #
 ################################################################################
 .PHONY: modtidy
-modtidy:
+modtidy:  
 	go mod tidy
+
 
 ################################################################################
 # Target: init-proto                                                            #
