@@ -68,7 +68,7 @@ export GOOS ?= $(TARGET_OS_LOCAL)
 # Default docker container and e2e test targst.
 TARGET_OS ?= linux
 TARGET_ARCH ?= amd64
-
+GOLANGCILINT_VER ?= v1.31
 ifeq ($(GOOS),windows)
 BINARY_EXT_LOCAL:=.exe
 GOLANGCI_LINT:=golangci-lint.exe
@@ -77,6 +77,7 @@ else
 BINARY_EXT_LOCAL:=
 GOLANGCI_LINT:=golangci-lint
 export ARCHIVE_EXT = .tar.gz
+wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s $(GOLANGCILINT_VER) \
 endif
 
 export BINARY_EXT ?= $(BINARY_EXT_LOCAL)
