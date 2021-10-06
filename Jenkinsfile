@@ -22,6 +22,11 @@ pipeline {
         prepareBuild()
       }
     }
+    stage("Lint") {
+      steps {
+        sh "cd $DIRECTORY && make lint"
+      }
+    }
     stage("Build") {
       steps {
         sh "cd $DIRECTORY && make build"
