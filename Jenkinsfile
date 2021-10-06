@@ -33,7 +33,7 @@ pipeline {
 		}
     stage("Lint") {
       steps {
-        sh "cd $DIRECTORY && make lint"
+        sh 'golangci-lint run --timeout=20m'
       }
     }
     stage("Build") {
