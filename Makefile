@@ -77,7 +77,7 @@ else
 BINARY_EXT_LOCAL:=
 GOLANGCI_LINT:=golangci-lint
 export ARCHIVE_EXT = .tar.gz
-wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s $(GOLANGCILINT_VER) \
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 2>&1
 endif
 
 export BINARY_EXT ?= $(BINARY_EXT_LOCAL)
