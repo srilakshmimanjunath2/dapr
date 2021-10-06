@@ -296,7 +296,7 @@ test:
 # Due to https://github.com/golangci/golangci-lint/issues/580, we need to add --fix for windows
 .PHONY: lint
 lint:   
-ifeq ($(TARGET_ARCH),arm64)
+ifeq ($(TARGET_ARCH),amd64)
   ifneq ($(TARGET_OS), linux)
      $(GOLANGCI_LINT) run --timeout=20m
   endif
