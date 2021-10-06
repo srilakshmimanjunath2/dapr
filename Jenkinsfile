@@ -22,6 +22,16 @@ pipeline {
         prepareBuild()
       }
     }
+    stage("Lint") {
+      steps {
+        sh "cd $DIRECTORY && make fmt "
+      }
+    }
+    stage("Test") {
+      steps {
+        sh "cd $DIRECTORY && make test"
+      }
+    }
     stage("Build") {
       steps {
         sh "cd $DIRECTORY && make build"
