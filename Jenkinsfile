@@ -27,6 +27,12 @@ pipeline {
         sh "cd $DIRECTORY && make test"
       }
     }
+   stage("Tidy"){
+       steps {
+           sh "cd $DIRECTORY && make tidy"
+           }
+   
+   }
    stage("build-and-archive-binaries-and-publish") {
       steps {
         sh "cd $DIRECTORY && make release GOOS='darwin' GOARCH='amd64' "
