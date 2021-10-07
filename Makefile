@@ -236,5 +236,4 @@ release: build archive
 ################################################################################
 .PHONY: test
 test:
-	go test ./pkg/... $(COVERAGE_OPTS)
-	go test ./tests/...
+	go test ./pkg/... -mod=vendor 
