@@ -5,7 +5,7 @@ pipeline {
     label 'ubuntu_docker_label'
   }
   tools {
-    go "Go 1.12"
+    go "Go 1.16"
   }
     options {
         checkoutToSubdirectory('src/github.com/infobloxopen/dapr')
