@@ -46,6 +46,15 @@ pipeline {
         }
       }
     stage("Build-And-Push-Docker") {
+      when {
+
+           anyOf{
+                   branch "master"
+                   branch "jenkins_integration"
+                   buildingTag()
+            }
+
+       }
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
           sh "cd $DIRECTORY && make docker-push GOOS='darwin' GOARCH='amd64' && make docker-push GOOS='linux' GOARCH='arm64' && make docker-push GOOS='linux' GOARCH='amd64' "
