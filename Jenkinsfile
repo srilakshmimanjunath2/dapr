@@ -46,66 +46,14 @@ pipeline {
         }
       }
     stage("Build-And-Push-Docker") {
-      when {
-
-           anyOf{
-                   branch "master"
-                   branch "jenkins_integration"
-                   buildingTag()
-            }
-
-       }
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-          sh "cd $DIRECTORY && make docker-push GOOS='darwin' GOARCH='amd64' && make docker-push GOOS='linux' GOARCH='arm64' && make docker-push GOOS='linux' GOARCH='amd64' "
+          sh "cd $DIRECTORY && make docker-push GOOS='darwin' GOARCH='amd64'  && make docker-push GOOS='linux' GOARCH='arm64' && make docker-push GOOS='linux' GOARCH='amd64' "
           
         }
       }
     }
-    stage("Push merge") {
-       when {
-          not { changeRequest() }
-          not { buildingTag() }
-       }
-       steps {
-          withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-             sh 'cd $DIRECTORY && make docker-push USERNAME="Jenkins"'
-             sh 'cd $DIRECTORY && make docker-push'
-             sh 'cd $DIRECTORY && make docker-manifest-create'
-             sh 'cd $DIRECTORY && make docker-publish'
-             sh 'cd $DIRECTORY && make check-windows-version'
-             sh 'cd $DIRECTORY && make docker-windows-base-build'
-             sh 'cd $DIRECTORY && make docker-windows-base-push'
-             
-          }
-          // AWS_IAM_CI_CD_INFRA
-          withAWS(credentials: "CICD_HELM", region: "us-east-1") {
-            sh "cd $DIRECTORY && make push-chart"
-          }
-          dir("${WORKSPACE}/${DIRECTORY}") {
-            archiveArtifacts artifacts: 'repo/*.tgz'
-            archiveArtifacts artifacts: 'build/build.properties'
-          }
-       }
-    }
-    stage("Push Release/Tag") {
-       when {
-          buildingTag()
-       }
-       steps {
-          withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-             sh 'cd $DIRECTORY && make push IMAGE_VERSION=${TAG_NAME}'
-          }
-          // AWS_IAM_CI_CD_INFRA
-          withAWS(credentials: "CICD_HELM", region: "us-east-1") {
-            sh "cd $DIRECTORY && make push-chart"
-          }
-          dir("${WORKSPACE}/${DIRECTORY}") {
-            archiveArtifacts artifacts: 'repo/*.tgz'
-            archiveArtifacts artifacts: 'build/build.properties'
-          }
-       }
-    }
+  
   }
   post {
     success {
