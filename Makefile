@@ -184,19 +184,19 @@ endif
 # build docker image for linux
 docker-build: 
 	$(info Building $(DOCKER_IMAGE_TAG) docker image ...)
-	$(DOCKER) build --build-arg PKG_FILES=* -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(LINUX_BINS_OUT_DIR)/. -t $(DOCKER_IMAGE_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	$(DOCKER) build --build-arg PKG_FILES=* -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(LINUX_BINS_OUT_DIR)/. -t $(DOCKER_IMAGE_TAG)-$(GOOS)-$(GOARCH)
 ifeq ($(LATEST_RELEASE),true)
 	$(info Building $(DOCKER_IMAGE_LATEST_TAG) docker image ...)
-	$(DOCKER) tag $(DOCKER_IMAGE_TAG) $(DOCKER_IMAGE_LATEST_TAG)-$(TARGET_OS)-$(TARGET_ARCH)
+	$(DOCKER) tag $(DOCKER_IMAGE_TAG) $(DOCKER_IMAGE_LATEST_TAG)-$(GOOS)-$(GOARCH)
 endif
 
 # push docker image to the registry
 docker-push: docker-build
-	$(info Pushing $(DOCKER_IMAGE_TAG) docker image ...)
-	$(DOCKER) push $(DOCKER_IMAGE_TAG)
+	$(info Pushing $(DOCKER_IMAGE_TAG)-$(GOOS)-$(GOARCH) docker image ...)
+	$(DOCKER) push $(DOCKER_IMAGE_TAG)-$(GOOS)-$(GOARCH)
 ifeq ($(LATEST_RELEASE),true)
-	$(info Pushing $(DOCKER_IMAGE_LATEST_TAG) docker image ...)
-	$(DOCKER) push $(DOCKER_IMAGE_LATEST_TAG)
+      $(info Pushing $(DOCKER_IMAGE_LATEST_TAG)-$(GOOS)-$(GOARCH) docker image ...) 
+      $(DOCKER) push $(DOCKER_IMAGE_LATEST_TAG)-$(GOOS)-$(GOARCH)
 endif
 
 ################################################################################
