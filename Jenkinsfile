@@ -48,7 +48,7 @@ pipeline {
     stage("Build-And-Push-Docker") {
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
-          sh "cd $DIRECTORY && make docker-push GOOS='darwin' GOARCH='amd64'  && make docker-push GOOS='linux' GOARCH='arm64' && make docker-push GOOS='linux' GOARCH='amd64' "
+          sh "cd $DIRECTORY && make docker-build GOOS='darwin' GOARCH='amd64'  && make docker-build GOOS='linux' GOARCH='arm64' && make docker-build GOOS='linux' GOARCH='amd64' "
           
         }
       }
