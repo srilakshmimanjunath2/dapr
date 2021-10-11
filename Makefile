@@ -14,7 +14,7 @@ export GOSUMDB ?= sum.golang.org
 PROJECT_ROOT := infobloxopen/dapr
 REPO         := infobloxopen
 GITHUB_REPO  := git@github.com:infobloxopen
-
+WINDOWS_VERSION :=1809
 
 
 GIT_COMMIT  = $(shell git rev-list -1 HEAD)
@@ -252,6 +252,16 @@ docker-push-arm: docker-build-arm
 	$(DOCKER) buildx build --build-arg PKG_FILES=placement --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_PLACEMENT_DOCKER_IMAGE_TAG)-$(GOOS)-$(GOARCH) --push
 	$(DOCKER) buildx build --build-arg PKG_FILES=sentry --platform $(DOCKER_IMAGE_PLATFORM) -f $(DOCKERFILE_DIR)/$(DOCKERFILE) $(BIN_PATH) -t $(DAPR_SENTRY_DOCKER_IMAGE_TAG)-$(GOOS)-$(GOARCH) --push
 
+check-windows-version:
+ifeq ($(WINDOWS_VERSION),)
+	$(error WINDOWS_VERSION environment variable must be set)
+endif
+
+docker-windows-base-build: check-windows-version
+	$(DOCKER) build --build-arg WINDOWS_VERSION=$(WINDOWS_VERSION) -f $(DOCKERFILE_DIR)/Dockerfile-windows-base . -t $(REPO)/windows-base:$(WINDOWS_VERSION)
+
+docker-windows-base-push: docker-windows-base-build
+	$(DOCKER) push $(REPO)/windows-base:$(WINDOWS_VERSION)
 
 ################################################################################
 # Target: manifest-gen                                                         #
