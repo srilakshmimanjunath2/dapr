@@ -47,7 +47,7 @@ pipeline {
       }
    stage("build-and-archive-binaries-windows-amd64"){
          steps { 
-          #sh "cd $DIRECTORY && make tidy && make release GOOS='windows' GOARCH='amd64' "
+          
         }
       }
     stage("Build-And-Push-Docker") {
