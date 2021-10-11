@@ -4,6 +4,6 @@ RUN apk add -U --no-cache ca-certificates
 
 FROM gcr.io/distroless/static:nonroot
 ARG PKG_FILES
-WORKDIR /
+WORKDIR /go/src/github.com/infobloxopen/dapr
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 ADD release/. /
