@@ -307,9 +307,10 @@ tidy:
 ################################################################################
 .PHONY:clean
 clean:
-
-
-
+	$(DOCKER) rmi -f $(shell docker images -q $(DOCKER_IMAGE_TAG)) || true
+	$(DOCKER) rmi -f $(shell docker images -q $(DAPR_RUNTIME_DOCKER_IMAGE_TAG)) || true
+	$(DOCKER) rmi -f $(shell docker images -q $(DAPR_PLACEMENT_DOCKER_IMAGE_TAG)) || true
+	$(DOCKER) rmi -f $(shell docker images -q $(DAPR_SENTRY_DOCKER_IMAGE_TAG)) || true
 ################################################################################
 # Target: test                                                                 #
 ################################################################################
