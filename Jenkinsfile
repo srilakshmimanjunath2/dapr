@@ -45,11 +45,6 @@ pipeline {
           sh "cd $DIRECTORY && make tidy && make release GOOS='linux' GOARCH='amd64' "
         }
       }
-   stage("build-and-archive-binaries-windows-amd64"){
-         steps { 
-          
-        }
-      }
     stage("Build-And-Push-Docker") {
        steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
