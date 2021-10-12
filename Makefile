@@ -194,7 +194,7 @@ ifeq ($(GOARCH),arm)
 else ifeq ($(GOARCH),arm64)
 	DOCKER_IMAGE_PLATFORM:=$(GOOS)/arm64/v8
 else
-	#DOCKER_IMAGE_PLATFORM:=$(GOOS)/amd64
+	DOCKER_IMAGE_PLATFORM:=$(GOOS)/amd64
 endif
 
 
