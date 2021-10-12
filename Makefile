@@ -1,5 +1,5 @@
 # ------------------------------------------------------------
-# Copyright (c) Microsoft Corporation and Dapr Contributors..
+# Copyright (c) Microsoft Corporation and Dapr Contributors
 # Licensed under the MIT License.
 # ------------------------------------------------------------
 
