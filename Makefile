@@ -12,7 +12,7 @@ export GOPROXY ?= https://proxy.golang.org
 export GOSUMDB ?= sum.golang.org
 
 PROJECT_ROOT := infobloxopen/dapr
-REPO         := infobloxopen
+REPO         := infoblox
 GITHUB_REPO  := git@github.com:infobloxopen
 WINDOWS_VERSION :=1809
 
